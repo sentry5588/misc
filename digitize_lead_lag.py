@@ -1,6 +1,7 @@
 # For online discussion:
 # https://www.reddit.com/r/ControlTheory/comments/c1w5r6/lead_lag_for_inexpensive_plc/
 # To verify if my proposed solution is correct or not by simulation
+# Digitization method: https://imgur.com/lnOZI8W
 # Confirmed correct
 
 import numpy as np
