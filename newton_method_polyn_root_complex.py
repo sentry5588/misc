@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct 12 17:07:36 2021
-
-@author: jh
 """
 import array as arr
 import matplotlib.pyplot as plt
