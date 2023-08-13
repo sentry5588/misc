@@ -76,7 +76,25 @@ def go_back_pop_stack(stack):
     stack['start'].pop()
     dir_prev = stack['directions'].pop()
     stack['cubic_space'].pop()
+    while dir_prev == 5: # TODO how about other directions?
+        stack['start'].pop()
+        dir_prev = stack['directions'].pop()
+        stack['cubic_space'].pop()
     return dir_prev
+
+# generate next move
+def possible_moves(stack, start_index, all_directions = puzzle_config()['all_directions']):
+    if len(stack['directions']) == 0:
+        m = [(i, d) for i, d in enumerate(all_directions) if i >= start_index]
+    elif stack['directions'][-1] == 0 or stack['directions'][-1] == 1:
+        m = [(i, d) for i, d in enumerate(all_directions) if i >= start_index and i > 1]
+    elif stack['directions'][-1] == 2 or stack['directions'][-1] == 3:
+        m = [(i, d) for i, d in enumerate(all_directions) if i >= start_index and (i < 2 or i > 3)]
+    elif stack['directions'][-1] == 4 or stack['directions'][-1] == 5:
+        m = [(i, d) for i, d in enumerate(all_directions) if i >= start_index and i < 4]
+    pass
+
+    return m
 
 def solve_puzzle():
     config = puzzle_config()
@@ -94,33 +112,27 @@ def solve_puzzle():
     loop_count = 0
     while solved_flag == False:
         loop_count += 1
+        print("loop ", loop_count, ": ", stack['directions'])
         if len(stack['directions']) == 0 or new_trial_flag == True:
             start_index = 0
             new_trial_flag = False
         else:
             start_index = dir_prev + 1
-            if start_index == 6:
-                pop_flag = True
-        for i in range(start_index, len(all_directions)):
+            
+        m = possible_moves(stack, start_index)
+        for i, d in m:
 
-            # skip the same and opposite directions
-            if len(stack['directions']) > 0 and i//2 == stack['directions'][-1]//2:
-                if i == 5 or i == 4:
-                    pop_flag = True
-                continue
-
-            d = all_directions[i]
             r, c = check_cubic(cubic_space[-1].copy(), stack['start'][-1].copy(), d, lengths[len(stack['directions'])])
             
             if r >= 0: # Found a valid one-step direction, push to the stack
                 new_move_push_stack(stack, stack['start'][-1] + d * lengths[len(stack['directions'])], i, c)
                 new_trial_flag = True
-                # print("try new ", sum(cubic_space[-1].flatten()), ": ", directions)
+                print("try new ", sum(cubic_space[-1].flatten()), ": ", stack['directions'])
                 if r == 1:
                     solved_flag = True
                 break
 
-            if i == len(all_directions) - 1: # No valid direction, pop the stack
+            if i == m[-1][0]: # No valid direction, pop the stack
                 pop_flag = True
         
         if pop_flag:
