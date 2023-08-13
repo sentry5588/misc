@@ -1,4 +1,3 @@
-import itertools
 import numpy as np
 import doctest
 
@@ -19,6 +18,16 @@ def puzzle_config():
               'y': y, 
               'z': z}
     return config
+
+def cubic_space_init():
+    config = puzzle_config()
+    x_max = config['x']
+    y_max = config['y']
+    z_max = config['z']
+    start_init = config['start'][0]
+    cubic_space = np.zeros((z_max, y_max, x_max))
+    cubic_space[start_init[2], start_init[1], start_init[0]] = 1
+    return cubic_space
 
 def verify_slution(solution = [0, 3, 1, 5, 0, 4, 0, 2, 1, 5, 3, 4, 0, 5, 2, 0, 3]):
     config = puzzle_config()
@@ -77,6 +86,8 @@ def go_back_pop_stack(stack):
     dir_prev = stack['directions'].pop()
     stack['cubic_space'].pop()
     m = possible_moves(stack, 0)
+
+    # continue to pop the stack until the next move is possible
     while len(stack['directions']) > 0 and dir_prev == m[-1][0]:
         stack['start'].pop()
         dir_prev = stack['directions'].pop()
@@ -100,15 +111,11 @@ def possible_moves(stack, start_index, all_directions = puzzle_config()['all_dir
 def solve_puzzle():
     config = puzzle_config()
     lengths = config['lengths']
-    all_directions = config['all_directions']
-    x_max = config['x']
-    y_max = config['y']
-    z_max = config['z']
     solved_flag = False
     pop_flag = False
     new_trial_flag = True
-    cubic_space = [np.zeros((z_max, y_max, x_max))] # 0 means empty, 1 means occupied
-    cubic_space[0][0, 0, 2] = 1
+    cubic_space = [] # 0 means empty, 1 means occupied
+    cubic_space.append(cubic_space_init().copy())
     stack = {'start': config['start'].copy(), 'directions': [], 'cubic_space': cubic_space}
     loop_count = 0
     while solved_flag == False:
@@ -141,7 +148,7 @@ def solve_puzzle():
                 print("No solution!")
                 return -1
 
-    print("*** Solved: ", stack['directions'])
+    print("*** Solved [", loop_count, "trials ]: ", stack['directions'])
     return stack['directions']
 
 # Run doctests
