@@ -41,7 +41,6 @@ def verify_slution(solution = [0, 3, 1, 5, 0, 4, 0, 2, 1, 5, 3, 4, 0, 5, 2, 0, 3
     cubic_space = np.zeros((z_max, y_max, x_max))
     cubic_space[s[2], s[1], s[0]] = 1
     for i in range(len(solution)):
-        # print("before i=", i, ",", sum(cubic_space.flatten()), ", d=", solution[i], "s=", start[-1])
         r, c = check_cubic(cubic_space.copy(), start[-1].copy(), all_directions[solution[i]], lengths[i])
         if r < 0:
             print("Invalid solution!")
@@ -49,7 +48,6 @@ def verify_slution(solution = [0, 3, 1, 5, 0, 4, 0, 2, 1, 5, 3, 4, 0, 5, 2, 0, 3
         else:
             start.append(start[-1] + all_directions[solution[i]] * lengths[i])
             cubic_space = c
-            # print("i=", i, ",", sum(cubic_space.flatten()), ": ", solution[:i+1], "r=", r, "s=", start[-1])
     if sum(cubic_space.flatten()) != x_max * y_max * z_max:
         return False
     else:
@@ -57,7 +55,6 @@ def verify_slution(solution = [0, 3, 1, 5, 0, 4, 0, 2, 1, 5, 3, 4, 0, 5, 2, 0, 3
 
 # check if the cubic is valid
 def check_cubic(cubic_space, s, direction, length):
-    s_init = s.copy()
     config = puzzle_config()
     x_max = config['x']
     y_max = config['y']
@@ -72,7 +69,7 @@ def check_cubic(cubic_space, s, direction, length):
     if sum(cubic_space.flatten()) != x_max * y_max * z_max:
         return 0, cubic_space # not all cubes are occupied
     else:
-        return 1, cubic_space
+        return 1, cubic_space # all cubes are occupied
 
 # new move
 def new_move_push_stack(stack, s, i, c):
@@ -111,18 +108,17 @@ def possible_moves(stack, start_index, all_directions = puzzle_config()['all_dir
 def solve_puzzle():
     config = puzzle_config()
     lengths = config['lengths']
-    solved_flag = False
     pop_flag = False
-    new_trial_flag = True
+    new_trial_flag = True # TODO is this necessary? Can we get rid of it?
     cubic_space = [] # 0 means empty, 1 means occupied
     cubic_space.append(cubic_space_init().copy())
     stack = {'start': config['start'].copy(), 'directions': [], 'cubic_space': cubic_space}
     loop_count = 0
-    while solved_flag == False:
+    while True:
         loop_count += 1
         # print("loop_count=", loop_count, ", stack['directions']=", stack['directions'])
         if len(stack['directions']) == 0 or new_trial_flag == True:
-            start_index = 0
+            start_index = 0 # TODO can we find a way to avoid this variable?
             new_trial_flag = False
         else:
             start_index = dir_prev + 1
@@ -135,7 +131,8 @@ def solve_puzzle():
                 new_move_push_stack(stack, stack['start'][-1] + d * lengths[len(stack['directions'])], i, c)
                 new_trial_flag = True
                 if r == 1:
-                    solved_flag = True
+                    print("*** Solved [", loop_count, "trials ]: ", stack['directions'])
+                    return stack['directions']
                 break
 
             if i == m[-1][0]: # No valid direction, pop the stack
@@ -148,8 +145,6 @@ def solve_puzzle():
                 print("No solution!")
                 return -1
 
-    print("*** Solved [", loop_count, "trials ]: ", stack['directions'])
-    return stack['directions']
 
 # Run doctests
 if __name__ == "__main__":
