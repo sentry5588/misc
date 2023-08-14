@@ -70,9 +70,9 @@ def check_cubic(cubic_space, s, direction, length):
         if cubic_space[s[2], s[1], s[0]] > 1:
             return -2, cubic_space # overlap
     if sum(cubic_space.flatten()) != x_max * y_max * z_max:
-        return 0, cubic_space # not all cubes are occupied
+        return 0, cubic_space # not all positions are occupied
     else:
-        return 1, cubic_space # all cubes are occupied
+        return 1, cubic_space # all positions are occupied
 
 # push the new move to the stack
 def new_move_push_stack(stack, start, direction, cubic_space):
@@ -111,17 +111,18 @@ def solve_puzzle():
              'directions': [],
              'last_tried_dir': [-1],
              'cubic_space': cubic_space}
-    loop_count = 0
+    trial_count = 0
     while True:
-        loop_count += 1
         m = possible_moves(stack)
         for i, d in m:
+            trial_count += 1
             r, c = check_cubic(cubic_space[-1].copy(), stack['start'][-1].copy(), d, lengths[len(stack['directions'])])
+            print("Trying [", trial_count, "trials ]: ", stack['directions'], "->", i)
             stack['last_tried_dir'][-1] = i
             if r >= 0: # Found a valid one-step direction, push to the stack
                 new_move_push_stack(stack, stack['start'][-1] + d * lengths[len(stack['directions'])], i, c)
                 if r == 1:
-                    print("*** Solved [", loop_count, "trials ]: ", stack['directions'])
+                    print("*** Solved [", trial_count, "trials ]: ", stack['directions'])
                     return stack['directions']
                 break
                         
