@@ -1,9 +1,10 @@
 import numpy as np
 import doctest
+import time
 
 # Define the initial state of the snake cubic puzzle
 def puzzle_config():
-    lengths = np.array([2, 2, 2, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 2, 1, 1, 2])
+    lengths = np.array([2, 1, 1, 2, 1, 2, 1, 1, 2, 2, 1, 1, 1, 2, 2, 2, 2])
     start = [np.array([2, 0, 0])] # starting point
     all_directions = np.array([[-1, 0, 0], [1, 0, 0],
                     [0, -1, 0], [0, 1, 0],
@@ -29,7 +30,7 @@ def cubic_space_init():
     cubic_space[start_init[2], start_init[1], start_init[0]] = 1
     return cubic_space
 
-def verify_slution(solution = [0, 3, 1, 5, 0, 4, 0, 2, 1, 5, 3, 4, 0, 5, 2, 0, 3]):
+def verify_slution(solution):
     if len(solution) != len(puzzle_config()['lengths']):
         print("Invalid solution!")
         return False
@@ -58,6 +59,7 @@ def verify_slution(solution = [0, 3, 1, 5, 0, 4, 0, 2, 1, 5, 3, 4, 0, 5, 2, 0, 3
 
 # check if the cubic is valid
 def check_cubic(cubic_space, s, direction, length):
+    time.sleep(0.1)
     config = puzzle_config()
     x_max = config['x']
     y_max = config['y']
