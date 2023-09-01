@@ -3,6 +3,13 @@
 Test numpy and other python code that are used in deep learning course
 """
 import numpy as np
+import sys
+
+x = np.random.rand(3, 2)
+y = np.sum(x, axis=0, keepdims=True)
+print('y.shape=', y.shape)
+
+sys.exit()
 
 X = np.array([[[0, 0, 0],
     [1, 1, 1]],
@@ -14,3 +21,4 @@ X_flatten = X.reshape(X.shape[0], -1).T      # X.T is the transpose of X
 print("X_flatten=", X_flatten)
 print("X.shape=", X.shape)
 print("X_flatten.shape=", X_flatten.shape)
+
